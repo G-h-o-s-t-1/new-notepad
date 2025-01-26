@@ -1,0 +1,50 @@
+import customtkinter as ctk
+from tkinter import filedialog, Menu
+
+# App setup
+app = ctk.CTk()
+app.geometry("720x180-10+0")  # Adjust height for all widgets
+app.title("-")
+
+# Text area (rounded edges)
+text_area = ctk.CTkTextbox(app, width=780, height=400, corner_radius=20)
+text_area.pack(padx=10, pady=10)  # Padding for text area
+
+# File operations
+def open_file():
+    path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+    if path:
+        with open(path, "r") as file:
+            text_area.delete("1.0", "end")
+            text_area.insert("1.0", file.read())
+
+def save_file():
+    path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+    if path:
+        with open(path, "w") as file:
+            file.write(text_area.get("1.0", "end"))
+
+# Font toggle function
+def toggle_font():
+    if font_check_var.get():
+        text_area.configure(font=("Eras Medium ITC", 14))  # Use Eras Medium ITC
+    else:
+        text_area.configure(font=("Segoe Print", 14))  # Use Segoe Print
+
+# Font toggle checkbox
+font_check_var = ctk.BooleanVar(value=False)  # Default unchecked
+font_checkbox = ctk.CTkCheckBox(app, text="Font", variable=font_check_var, command=toggle_font, width=30)
+
+# Place checkbox at top-right corner
+font_checkbox.place(x=app.winfo_width() - -450, y=0)  # Adjust x to position at the top-right
+
+# Menu setup
+menu = Menu(app, tearoff=0)
+app.config(menu=menu)
+file_menu = Menu(menu, tearoff=0)
+menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+
+# Run the app
+app.mainloop()
